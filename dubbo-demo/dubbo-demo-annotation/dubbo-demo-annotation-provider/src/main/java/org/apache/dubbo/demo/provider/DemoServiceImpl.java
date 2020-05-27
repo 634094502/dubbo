@@ -31,13 +31,8 @@ import java.util.concurrent.CompletableFuture;
 public class DemoServiceImpl implements DemoService {
     private static final Logger logger = LoggerFactory.getLogger(DemoServiceImpl.class);
 
-    @Reference(injvm = false)
-    private AliceService aliceService;
-
     @Override
     public String sayHello(String name) {
-        String alice = aliceService.call(name);
-        logger.info(alice);
         logger.info("Hello " + name + ", request from consumer: " + RpcContext.getContext().getRemoteAddress());
         return "Hello " + name + ", response from provider: " + RpcContext.getContext().getLocalAddress();
     }

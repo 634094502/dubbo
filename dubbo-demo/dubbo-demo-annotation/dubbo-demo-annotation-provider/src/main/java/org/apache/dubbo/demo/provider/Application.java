@@ -17,18 +17,24 @@
 package org.apache.dubbo.demo.provider;
 
 import org.apache.dubbo.config.RegistryConfig;
+import org.apache.dubbo.config.annotation.Reference;
+import org.apache.dubbo.config.annotation.Service;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
-
+import org.apache.dubbo.rpc.*;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 public class Application {
-    public static void main(String[] args) throws Exception {
+
+    public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ProviderConfiguration.class);
         context.start();
-        System.in.read();
+        DemoService service = context.getBean("demo", DemoServiceImpl.class);
+        String hello = service.sayHello("world");
+        System.out.println("result :" + hello);
     }
 
     @Configuration
@@ -41,5 +47,38 @@ public class Application {
             registryConfig.setAddress("zookeeper://127.0.0.1:2181");
             return registryConfig;
         }
+    }
+
+    public interface DemoService {
+        String sayHello(String name);
+    }
+
+    @Service
+    @Component("demo")
+    public static class DemoServiceImpl implements DemoService {
+
+        @Reference(injvm = false)
+        private AliceService aliceService;
+
+        @Override
+        public String sayHello(String name) {
+            String alice = aliceService.call(name);
+            System.out.println(alice);
+            return alice;
+        }
+    }
+
+    public interface AliceService {
+        String call(String name);
+    }
+
+    @Service(filter = "qos")
+    public static class AliceServiceImpl implements AliceService {
+        @Override
+        public String call(String name) {
+            String result = "alice call " + name;
+            return result;
+        }
+
     }
 }
