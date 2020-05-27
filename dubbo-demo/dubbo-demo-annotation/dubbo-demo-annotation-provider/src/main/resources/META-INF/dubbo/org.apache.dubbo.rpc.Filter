@@ -1,1 +1,1 @@
-qos=filter.QosFilter
+qos=org.apache.dubbo.demo.provider.Application$QosFilter
