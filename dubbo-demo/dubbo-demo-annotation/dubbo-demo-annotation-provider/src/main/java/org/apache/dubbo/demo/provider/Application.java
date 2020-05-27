@@ -16,11 +16,14 @@
  */
 package org.apache.dubbo.demo.provider;
 
+import filter.QosFilter;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.apache.dubbo.rpc.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +31,16 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 public class Application {
+
+    public static class QosFilter implements Filter {
+
+        private static final Logger logger = LoggerFactory.getLogger(filter.QosFilter.class);
+        @Override
+        public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
+            logger.info("qos invoked =======================================================================================");
+            return invoker.invoke(invocation);
+        }
+    }
 
     public static void main(String[] args) {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ProviderConfiguration.class);
