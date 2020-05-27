@@ -11,7 +11,7 @@ public class AliceServiceImpl implements AliceService {
 
     @Override
     public String call(String name) {
-        String result = "alice call" + name;
+        String result = "alice call " + name;
         logger.info(result);
         return result;
     }
