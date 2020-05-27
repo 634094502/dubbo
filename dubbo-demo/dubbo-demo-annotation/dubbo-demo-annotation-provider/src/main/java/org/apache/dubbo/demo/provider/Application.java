@@ -16,7 +16,6 @@
  */
 package org.apache.dubbo.demo.provider;
 
-import filter.QosFilter;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
@@ -31,10 +30,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 public class Application {
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
     public static class QosFilter implements Filter {
-
-        private static final Logger logger = LoggerFactory.getLogger(filter.QosFilter.class);
         @Override
         public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
             logger.info("qos invoked =======================================================================================");
@@ -47,7 +45,7 @@ public class Application {
         context.start();
         DemoService service = context.getBean("demo", DemoServiceImpl.class);
         String hello = service.sayHello("world");
-        System.out.println("result :" + hello);
+        logger.info("result :" + hello);
     }
 
     @Configuration
@@ -76,7 +74,7 @@ public class Application {
         @Override
         public String sayHello(String name) {
             String alice = aliceService.call(name);
-            System.out.println(alice);
+            logger.info(alice);
             return alice;
         }
     }
